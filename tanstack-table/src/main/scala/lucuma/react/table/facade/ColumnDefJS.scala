@@ -11,9 +11,9 @@ import reactST.tanstackTableCore.mod.ColumnMeta
 
 trait ColumnDefJS[T, A] extends js.Object:
   var id: String
+  var header: js.UndefOr[js.Function1[raw.mod.HeaderContext[T, A], Node]]
   var accessorFn: js.UndefOr[js.Function1[T, A]]
   var cell: js.UndefOr[js.Function1[raw.mod.CellContext[T, A], Node]]
   var columns: js.UndefOr[js.Array[ColumnDefJS[T, Any]]]
-  var header: js.UndefOr[js.Function1[raw.mod.HeaderContext[T, A], Node]]
   var footer: js.UndefOr[js.Function1[raw.mod.HeaderContext[T, A], Node]]
   var meta: js.UndefOr[Any]
