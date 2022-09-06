@@ -28,17 +28,17 @@ object Table1:
       // cols
       .useMemo(())(_ =>
         List(
-          ColumnDef[Guitar]("id", _.id, _ => "Id", ctx => s"g-${ctx.getValue()}"),
+          ColumnDef[Guitar]("id", _.id, _ => "Id", ctx => s"g-${ctx.value}"),
           // TODO Facade for Cell/Header, Context
-          ColumnDef[Guitar]("make", _.make, _ => "Make", _.getValue().toString),
-          ColumnDef[Guitar]("model", _.model, _ => "Model", _.getValue().toString),
+          ColumnDef[Guitar]("make", _.make, _ => "Make", _.value),
+          ColumnDef[Guitar]("model", _.model, _ => "Model", _.value),
           ColumnDef.Group[Guitar](
             "details",
             _ => "Details",
             List(
-              ColumnDef("year", _.details.year, _ => "Year", _.getValue().toString),
-              ColumnDef("pickups", _.details.pickups, _ => "Pickups", _.getValue().toString),
-              ColumnDef("color", _.details.color, _ => "Color", _.getValue().toString)
+              ColumnDef("year", _.details.year, _ => "Year", _.value),
+              ColumnDef("pickups", _.details.pickups, _ => "Pickups", _.value),
+              ColumnDef("color", _.details.color, _ => "Color", _.value)
             )
           )
           // SortedTableDef

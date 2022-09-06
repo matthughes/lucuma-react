@@ -49,7 +49,7 @@ object ColumnDef:
   case class Group[T](
     id:      String,
     header:  js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
-    columns: List[ColumnDef[T, Any]],
+    columns: List[ColumnDef[T, ?]],
     footer:  js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
     meta:    js.UndefOr[Any] = js.undefined
   ) extends ColumnDef[T, Nothing]:
