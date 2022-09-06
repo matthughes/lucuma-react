@@ -10,14 +10,13 @@ import lucuma.react.table.facade.*
 import scalajs.js
 import scalajs.js.JSConverters.*
 
-sealed trait ColumnDef[T, A] {
+sealed trait ColumnDef[T, A]:
   val id: String
   val header: js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode]
   val footer: js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode]
   val meta: js.UndefOr[Any]
 
   def toJS: ColumnDefJS[T, A]
-}
 
 object ColumnDef:
   case class Single[T, A](
@@ -27,7 +26,7 @@ object ColumnDef:
     header:   js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
     footer:   js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
     meta:     js.UndefOr[Any] = js.undefined
-  ) extends ColumnDef[T, A] {
+  ) extends ColumnDef[T, A]:
     def toJS: ColumnDefJS[T, A] = {
       val p: ColumnDefJS[T, A] = new js.Object().asInstanceOf[ColumnDefJS[T, A]]
       p.id = id
@@ -38,7 +37,6 @@ object ColumnDef:
       p.meta = meta
       p
     }
-  }
 
   case class Group[T](
     id:      String,
@@ -46,7 +44,7 @@ object ColumnDef:
     header:  js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
     footer:  js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
     meta:    js.UndefOr[Any] = js.undefined
-  ) extends ColumnDef[T, Nothing] {
+  ) extends ColumnDef[T, Nothing]:
     def toJS: ColumnDefJS[T, Nothing] = {
       val p: ColumnDefJS[T, Nothing] = new js.Object().asInstanceOf[ColumnDefJS[T, Nothing]]
       p.id = id
@@ -56,7 +54,6 @@ object ColumnDef:
       p.meta = meta
       p
     }
-  }
 
   def apply[T]: Applied[T] =
     new Applied[T]
