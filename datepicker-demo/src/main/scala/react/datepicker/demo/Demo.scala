@@ -4,7 +4,7 @@
 package react.datepicker.demo
 
 import japgolly.scalajs.react._
-import lucuma.reactDatepicker.components.ReactDatepicker
+import reactST.reactDatepicker.components.ReactDatepicker
 import org.scalajs.dom
 import react.datepicker._
 

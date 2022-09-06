@@ -3,9 +3,9 @@
 
 package react.highcharts
 
-import gpp.highcharts.mod.Options
-import gpp.highcharts.mod.charts
-import gpp.highcharts.mod.{^ => HighCharts, _}
+import reactST.highcharts.mod.Options
+import reactST.highcharts.mod.charts
+import reactST.highcharts.mod.{^ => HighCharts, _}
 import japgolly.scalajs.react.test._
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.HTMLElement
