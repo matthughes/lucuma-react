@@ -3,11 +3,11 @@
 
 package lucuma.react.table
 
+import cats.syntax.all.*
 import reactST.{tanstackTableCore => raw}
-import react.common.ReactFnProps
+import react.common.*
 import japgolly.scalajs.react.*
 import japgolly.scalajs.react.vdom.html_<^.*
-import react.common.ReactFnProps
 import reactST.{tanstackReactTable => rawReact}
 import reactST.{tanstackTableCore => raw}
 import scalajs.js
@@ -15,6 +15,7 @@ import org.scalajs.dom.HTMLDivElement
 import reactST.{tanstackReactVirtual => rawVirtualReact}
 import reactST.{tanstackVirtualCore => rawVirtual}
 import scala.scalajs.js.annotation.JSImport
+import react.common.style.Css
 
 trait VirtualOptions /*[S, I]*/ extends js.Object:
   val count: Int
@@ -27,10 +28,14 @@ trait VirtualOptions /*[S, I]*/ extends js.Object:
 def useVirtualizerJS[T](options: VirtualOptions): rawVirtual.mod.Virtualizer[Any, Any] =
   js.native
 
-final case class HTMLTable[T](table: raw.mod.Table[T]) extends ReactFnProps(HTMLTable.component)
+final case class HTMLTable[T](table: raw.mod.Table[T], clazz: Css = Css.Empty)
+    extends ReactFnProps(HTMLTable.component)
 
-final case class HTMLTableVirtualized[T](table: raw.mod.Table[T])
-    extends ReactFnProps(HTMLTableVirtualized.component)
+final case class HTMLTableVirtualized[T](
+  table:          raw.mod.Table[T],
+  containerClazz: Css = Css.Empty,
+  clazz:          Css = Css.Empty
+) extends ReactFnProps(HTMLTableVirtualized.component)
 
 private def sortIndicator[T](col: raw.mod.Column[T, ?]): TagMod =
   col.getIsSorted().asInstanceOf[Boolean | String] match
@@ -40,90 +45,104 @@ private def sortIndicator[T](col: raw.mod.Column[T, ?]): TagMod =
       <.span(s" $index$ascDesc")
     case _              => TagMod.empty
 
-private def render[T](table: raw.mod.Table[T], rows: js.Array[raw.mod.Row[T]]) = <.table(
-  <.thead(
-    table
-      .getHeaderGroups()
-      .map(headerGroup =>
-        <.tr(^.key := headerGroup.id)(
-          headerGroup.headers
-            .map(header =>
-              <.th(^.key := header.id, ^.colSpan := header.colSpan.toInt)(
-                TagMod.unless(header.isPlaceholder)(
-                  <.div(
-                    header.column
-                      .getToggleSortingHandler()
-                      .map(handler =>
-                        ^.onClick ==> { e =>
-                          Callback(handler(e))
-                        }
-                      )
-                      .whenDefined
-                  )(
-                    rawReact.mod.flexRender(
-                      header.column.columnDef
-                        .asInstanceOf[raw.mod.HeaderContext[T, Any]]
-                        .header
-                        .asInstanceOf[rawReact.mod.Renderable[raw.mod.HeaderContext[T, Any]]],
-                      header.getContext().asInstanceOf[raw.mod.HeaderContext[T, Any]]
-                    ),
-                    sortIndicator(header.column)
+private def render[T](
+  table:         raw.mod.Table[T],
+  rows:          js.Array[raw.mod.Row[T]],
+  clazz:         Css = Css.Empty,
+  paddingTop:    Option[Int] = none,
+  paddingBottom: Option[Int] = none
+) =
+  <.table(clazz)(
+    <.thead(
+      table
+        .getHeaderGroups()
+        .map(headerGroup =>
+          <.tr(^.key := headerGroup.id)(
+            headerGroup.headers
+              .map(header =>
+                <.th(^.key     := header.id,
+                     ^.colSpan := header.colSpan.toInt,
+                     ^.width   := s"${header.getSize().toInt}px"
+                )(
+                  TagMod.unless(header.isPlaceholder)(
+                    <.div(
+                      header.column
+                        .getToggleSortingHandler()
+                        .map(handler =>
+                          ^.onClick ==> { e =>
+                            Callback(handler(e))
+                          }
+                        )
+                        .whenDefined
+                    )(
+                      rawReact.mod.flexRender(
+                        header.column.columnDef
+                          .asInstanceOf[raw.mod.HeaderContext[T, Any]]
+                          .header
+                          .asInstanceOf[rawReact.mod.Renderable[raw.mod.HeaderContext[T, Any]]],
+                        header.getContext().asInstanceOf[raw.mod.HeaderContext[T, Any]]
+                      ),
+                      sortIndicator(header.column)
+                    )
                   )
                 )
               )
-            )
-            .toArray: _*
+              .toArray: _*
+          )
         )
-      )
-      .toArray: _*
-  ),
-  <.tbody(
-    rows
-      .map(row =>
-        <.tr(^.key := row.id)(
-          row
-            .getVisibleCells()
-            .map(cell =>
-              <.td(^.key := cell.id)(
-                rawReact.mod.flexRender(
-                  cell.column.columnDef.cell
-                    .asInstanceOf[rawReact.mod.Renderable[raw.mod.CellContext[T, Any]]],
-                  cell.getContext().asInstanceOf[raw.mod.CellContext[T, Any]]
+        .toArray: _*
+    ),
+    <.tbody(paddingTop.filter(_ > 0).map(p => <.tr(<.td(^.height := s"${p}px"))).whenDefined)(
+      rows
+        .map(row =>
+          <.tr(^.key := row.id)(
+            row
+              .getVisibleCells()
+              .map(cell =>
+                <.td(^.key := cell.id)(
+                  rawReact.mod.flexRender(
+                    cell.column.columnDef.cell
+                      .asInstanceOf[rawReact.mod.Renderable[raw.mod.CellContext[T, Any]]],
+                    cell.getContext().asInstanceOf[raw.mod.CellContext[T, Any]]
+                  )
                 )
               )
-            )
-            .toArray: _*
+              .toArray: _*
+          )
         )
-      )
-      .toArray: _*
-  ),
-  <.tfoot(
-    table
-      .getFooterGroups()
-      .map(footerGroup =>
-        <.tr(^.key := footerGroup.id)(
-          footerGroup.headers.map { footer =>
-            <.th(^.key := footer.id, ^.colSpan := footer.colSpan.toInt)(
-              TagMod.unless(footer.isPlaceholder)(
-                rawReact.mod.flexRender(
-                  footer.column.columnDef.footer
-                    .asInstanceOf[rawReact.mod.Renderable[raw.mod.HeaderContext[T, Any]]],
-                  footer.getContext()
+        .toArray: _*
+    )(
+      paddingBottom.filter(_ > 0).map(p => <.tr(<.td(^.height := s"${p}px"))).whenDefined
+    ),
+    <.tfoot(
+      table
+        .getFooterGroups()
+        .map(footerGroup =>
+          <.tr(^.key := footerGroup.id)(
+            footerGroup.headers.map { footer =>
+              <.th(^.key := footer.id, ^.colSpan := footer.colSpan.toInt)(
+                TagMod.unless(footer.isPlaceholder)(
+                  rawReact.mod.flexRender(
+                    footer.column.columnDef.footer
+                      .asInstanceOf[rawReact.mod.Renderable[raw.mod.HeaderContext[T, Any]]],
+                    footer.getContext()
+                  )
                 )
               )
-            )
-          }.toArray: _*
+            }.toArray: _*
+          )
         )
-      )
-      .toArray: _*
+        .toArray: _*
+    )
   )
-)
 
 object HTMLTable:
   private type Props[T] = HTMLTable[T]
 
   private def componentBuilder[T] =
-    ScalaFnComponent[Props[T]](props => render(props.table, props.table.getRowModel().rows))
+    ScalaFnComponent[Props[T]](props =>
+      render(props.table, props.table.getRowModel().rows, props.clazz)
+    )
 
   private val component = componentBuilder[Any]
 
@@ -164,12 +183,23 @@ object HTMLTableVirtualized:
           )
       )
       .render { (props, ref, virtualizer) =>
-        val rows = props.table.getRowModel().rows
-        // TODO Compute paddings
-        <.div.withRef(ref)(
+        val rows          = props.table.getRowModel().rows
+        val virtualRows   = virtualizer.getVirtualItems()
+        val totalSize     = virtualizer.getTotalSize().toInt
+        val paddingTop    =
+          if (virtualRows.length > 0) virtualRows.headOption.map(_.start.toInt).getOrElse(0) else 0
+        val paddingBottom =
+          if (virtualRows.length > 0)
+            totalSize - virtualRows.lastOption.map(_.end.toInt).getOrElse(0)
+          else 0
+
+        <.div.withRef(ref)(props.containerClazz)(
           render(
             props.table,
-            virtualizer.getVirtualItems().map(virtualItem => rows(virtualItem.index.toInt))
+            virtualRows.map(virtualItem => rows(virtualItem.index.toInt)),
+            props.clazz,
+            paddingTop.some,
+            paddingBottom.some
           )
         )
       }

@@ -12,9 +12,9 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 import js.annotation._
 
 @JSExportTopLevel("Demo")
-object Demo {
+object Demo:
 
-  def logit(message: String, obj: Any) = dom.console.log(message, obj.asInstanceOf[js.Any])
+  // def logit(message: String, obj: Any) = dom.console.log(message, obj.asInstanceOf[js.Any])
 
   val guitars =
     List(
@@ -24,7 +24,7 @@ object Demo {
       Guitar(4, "Godin", "LG", Details(2008, 2, "Burgundy"))
     )
 
-  // val randomData = RandomData.randomPeople(1000)
+  val randomData = RandomData.randomPeople(1000)
 
   // val randomExpandableData = RandomData.randomExpandablePeople(1000)
 
@@ -39,9 +39,9 @@ object Demo {
     }
 
     <.div(
-      <.h1("Demo for scalajs-react-table"),
-      Table1.component(guitars)
-      // Table2.component(randomData),
+      <.h1("Demo for scalajs-tanstack-table"),
+      Table1.component(guitars),
+      Table2.component(randomData)
       // Table3.component(randomData),
       // Table4.component(randomData),
       // Table5.component(randomExpandableData)
@@ -50,4 +50,3 @@ object Demo {
 
     ()
   }
-}

@@ -5,21 +5,12 @@ package react.table.demo
 
 import japgolly.scalajs.react.*
 import japgolly.scalajs.react.vdom.html_<^.*
-import react.common.style.Css
-import reactST.tanstackTableCore.mod.{
-  AccessorFn => _,
-  ColumnDef => _,
-  TableOptions => RawOptions,
-  ^ => _,
-  *
-}
-import reactST.tanstackTableCore.anon.*
+import reactST.tanstackTableCore.mod.InitialTableState
+import reactST.tanstackTableCore.mod.ColumnSort
 import lucuma.react.table.*
 import react.common.*
 
-import org.scalajs.dom
 import scalajs.js
-import scalajs.js.JSConverters.*
 
 object Table1:
   val component =
@@ -46,21 +37,19 @@ object Table1:
       // rows
       .useMemoBy((guitars, _) => guitars)((_, _) => identity)
       // table
-      .customBy { (_, cols, rows) =>
-        TableHook.useTableHook(
-          TableOptions(
-            cols,
-            rows,
-            enableSorting = true,
-            initialState =
-              InitialTableState().setSorting(js.Array(ColumnSort(desc = true, id = "model")))
-          )
+      .useReactTableBy { (_, cols, rows) =>
+        TableOptions(
+          cols,
+          rows,
+          enableSorting = true,
+          initialState =
+            InitialTableState().setSorting(js.Array(ColumnSort(desc = true, id = "model")))
         )
       }
       .render { (_, _, _, table) =>
         React.Fragment(
           <.h2("Sortable table"),
-          HTMLTable(table),
+          HTMLTable(table, Css("guitars")),
           "Click header to sort. Shift-Click for multi-sort."
         )
       }
