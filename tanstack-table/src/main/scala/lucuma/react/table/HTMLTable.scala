@@ -77,23 +77,27 @@ object HTMLTable:
               )
             )
             .toArray: _*
+        ),
+        <.tfoot(
+          props.table
+            .getFooterGroups()
+            .map(footerGroup =>
+              <.tr(^.key := footerGroup.id)(
+                footerGroup.headers.map { footer =>
+                  <.th(^.key := footer.id, ^.colSpan := footer.colSpan.toInt)(
+                    TagMod.unless(footer.isPlaceholder)(
+                      flexRender(
+                        footer.column.columnDef.footer
+                          .asInstanceOf[Renderable[HeaderContext[T, Any]]],
+                        footer.getContext()
+                      )
+                    )
+                  )
+                }.toArray: _*
+              )
+            )
+            .toArray: _*
         )
-        // <tfoot>
-        //   {table.getFooterGroups().map(footerGroup => (
-        //     <tr key={footerGroup.id}>
-        //       {footerGroup.headers.map(header => (
-        //         <th key={header.id}>
-        //           {header.isPlaceholder
-        //             ? null
-        //             : flexRender(
-        //                 header.column.columnDef.footer,
-        //                 header.getContext()
-        //               )}
-        //         </th>
-        //       ))}
-        //     </tr>
-        //   ))}
-        // </tfoot>
       )
     )
 

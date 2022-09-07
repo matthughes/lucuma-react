@@ -22,14 +22,14 @@ import scalajs.js
 import scalajs.js.JSConverters.*
 
 object Table1:
-  private val SortedTable =
+  val component =
     ScalaFnComponent
       .withHooks[List[Guitar]]
       // cols
       .useMemo(())(_ =>
         List(
           ColumnDef[Guitar]("id", _.id, _ => "Id", ctx => s"g-${ctx.value}").sortAsc,
-          // TODO Facade for Cell/Header, Context instead of extension?
+          // TODO Facade for Cell/Header, Context instead of extension for .value?
           ColumnDef[Guitar]("make", _.make, _ => "Make", _.value),
           ColumnDef[Guitar]("model", _.model, _ => "Model", _.value).sortAscBy(_.length),
           ColumnDef.Group[Guitar](
@@ -44,13 +44,15 @@ object Table1:
         )
       )
       // rows
-      .useMemoBy((guitars, _) => guitars)((_, _) => guitars => guitars)
+      .useMemoBy((guitars, _) => guitars)((_, _) => identity)
       .customBy { (_, cols, rows) =>
         TableHook.useTableHook(
           TableOptions(
             cols,
             rows,
-            enableSorting = true
+            enableSorting = true,
+            initialState =
+              InitialTableState().setSorting(js.Array(ColumnSort(desc = true, id = "model")))
           )
         )
       }
@@ -58,13 +60,9 @@ object Table1:
       //   SortedTableDef(cols, rows, Reusable.always(_.setInitialState(sortedTableState)))
       // )
       .render { (_, _, _, table) =>
-        HTMLTable(table)
+        React.Fragment(
+          <.h2("Sortable table"),
+          HTMLTable(table),
+          "Click header to sort. Shift-Click for multi-sort."
+        )
       }
-
-  val component = ScalaFnComponent[List[Guitar]] { guitars =>
-    React.Fragment(
-      <.h2("Sortable table"),
-      SortedTable(guitars),
-      "Click header to sort. Shift-Click for multi-sort."
-    )
-  }

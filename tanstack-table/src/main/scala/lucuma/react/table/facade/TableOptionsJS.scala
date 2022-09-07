@@ -17,6 +17,7 @@ trait TableOptionsJS[T] extends js.Object:
   var onStateChange: js.UndefOr[raw.mod.Updater[raw.mod.TableState] => Callback] = js.undefined
   var renderFallbackValue: js.UndefOr[Any]                                       = js.undefined
   var state: js.UndefOr[raw.anon.PartialTableState]                              = js.undefined
+  var initialState: js.UndefOr[raw.mod.InitialTableState]                        = js.undefined
 
   // Sorting
   var enableMultiRemove: js.UndefOr[Boolean]                                = js.undefined
@@ -42,6 +43,7 @@ object TableOptionsJS:
     onStateChange:        js.UndefOr[raw.mod.Updater[raw.mod.TableState] => Callback] = js.undefined,
     renderFallbackValue:  js.UndefOr[Any] = js.undefined,
     state:                js.UndefOr[raw.anon.PartialTableState] = js.undefined,
+    initialState:         js.UndefOr[raw.mod.InitialTableState] = js.undefined,
     // Sorting
     enableMultiRemove:    js.UndefOr[Boolean] = js.undefined,
     enableMultiSort:      js.UndefOr[Boolean] = js.undefined,
@@ -60,6 +62,13 @@ object TableOptionsJS:
     p.columns = columns
     p.data = data
     p.getCoreRowModel = getCoreRowModel.getOrElse(rawReact.mod.getCoreRowModel())
+    onStateChange.foreach(fn => p.onStateChange = fn)
+    renderFallbackValue.foreach(v => p.renderFallbackValue = v)
+    state.foreach(v => p.state = v)
+    initialState.foreach(v => p.initialState = v)
+    // Sorting
+    // TODO MISSING PROPS!!!
+    // We are always defining a sortedRowModel
     p.enableSorting = enableSorting.getOrElse(false)
     p.getSortedRowModel = getSortedRowModel.getOrElse(rawReact.mod.getSortedRowModel())
     p

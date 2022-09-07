@@ -20,6 +20,7 @@ case class TableOptions[T](
   onStateChange:        js.UndefOr[raw.mod.Updater[raw.mod.TableState] => Callback] = js.undefined,
   renderFallbackValue:  js.UndefOr[Any] = js.undefined,
   state:                js.UndefOr[raw.anon.PartialTableState] = js.undefined,
+  initialState:         js.UndefOr[raw.mod.InitialTableState] = js.undefined,
   // Sorting
   enableMultiRemove:    js.UndefOr[Boolean] = js.undefined,
   enableMultiSort:      js.UndefOr[Boolean] = js.undefined,
@@ -33,3 +34,4 @@ case class TableOptions[T](
   onSortingChange:      js.UndefOr[raw.mod.OnChangeFn[raw.mod.SortingState]] = js.undefined,
   sortDescFirst:        js.UndefOr[Boolean] = js.undefined
 )
+// There's no toJS method here: JS version is constructed manually in the Hook with memoized columns and data.

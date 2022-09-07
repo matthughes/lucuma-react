@@ -55,7 +55,7 @@ object ColumnDef:
       p.accessorFn = accessor
       header.foreach(fn => p.header = fn.andThen(_.rawNode))
       p.cell = cell.andThen(_.rawNode)
-      header.foreach(fn => p.footer = fn.andThen(_.rawNode))
+      footer.foreach(fn => p.footer = fn.andThen(_.rawNode))
       meta.foreach(v => p.meta = v)
       // Sorting
       enableMultiSort.foreach(v => p.enableMultiSort = v)
@@ -79,7 +79,7 @@ object ColumnDef:
       p.id = id
       header.foreach(fn => p.header = fn.andThen(_.rawNode))
       p.columns = columns.map(_.toJS).toJSArray
-      header.foreach(fn => p.footer = fn.andThen(_.rawNode))
+      footer.foreach(fn => p.footer = fn.andThen(_.rawNode))
       meta.foreach(v => p.meta = v)
       p
     }

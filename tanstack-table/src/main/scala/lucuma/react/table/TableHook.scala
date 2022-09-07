@@ -12,6 +12,7 @@ import lucuma.react.table.facade.*
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters.*
 import scala.scalajs.js.annotation.JSImport
+import reactST.tanstackTableCore.tanstackTableCoreStrings.renderFallbackValue
 
 object TableHook {
   private def useTableJS[T] =
@@ -29,7 +30,10 @@ object TableHook {
           data = rows,
           getCoreRowModel = props.getCoreRowModel.map(fn => fn), // Forces conversion to js.Function
           onStateChange = props.onStateChange,
-          // ...
+          renderFallbackValue = props.renderFallbackValue,
+          state = props.state,
+          initialState = props.initialState,
+          // Sorting
           enableSorting = props.enableSorting,
           getSortedRowModel = props.getSortedRowModel.map(fn => fn)
         )
