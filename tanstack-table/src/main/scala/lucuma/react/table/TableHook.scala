@@ -14,17 +14,38 @@ import scala.scalajs.js.JSConverters.*
 import scala.scalajs.js.annotation.JSImport
 import reactST.tanstackTableCore.tanstackTableCoreStrings.renderFallbackValue
 
-object TableHook {
-  private def useTableJS[T] =
-    CustomHook.unchecked[TableOptionsJS[T], raw.mod.Table[T]](opts =>
-      useReactTable(opts.asInstanceOf[raw.mod.TableOptions[T]])
-    )
+object TableHook:
+  @JSImport("@tanstack/react-table", "useReactTable")
+  @js.native
+  private def useReactTableJS[T](options: TableOptionsJS[T]): raw.mod.Table[T] = js.native
+
+  // private def useTableJS[T] =
+  //   CustomHook.unchecked[TableOptionsJS[T], raw.mod.Table[T]](opts =>
+  //     useReactTable(opts.asInstanceOf[raw.mod.TableOptions[T]])
+  //   )
 
   def useTableHook[T] =
     CustomHook[TableOptions[T]]
       .useMemoBy(_.columns)(_ => _.toJSArray.map(_.toJS))
       .useMemoBy(_.input.data)(_ => _.toJSArray)
-      .customBy { (props, cols, rows) =>
+      // .customBy { (props, cols, rows) =>
+      //   val options = TableOptionsJS(
+      //     columns = cols,
+      //     data = rows,
+      //     getCoreRowModel = props.getCoreRowModel.map(fn => fn), // Forces conversion to js.Function
+      //     onStateChange = props.onStateChange,
+      //     renderFallbackValue = props.renderFallbackValue,
+      //     state = props.state,
+      //     initialState = props.initialState,
+      //     // Sorting
+      //     enableSorting = props.enableSorting,
+      //     getSortedRowModel = props.getSortedRowModel.map(fn => fn)
+      //   )
+
+      //   useReactTableJS[T](options)
+      // }
+      // .buildReturning((_, _, _, table) => table)
+      .buildReturning { (props, cols, rows) =>
         val options = TableOptionsJS(
           columns = cols,
           data = rows,
@@ -38,12 +59,5 @@ object TableHook {
           getSortedRowModel = props.getSortedRowModel.map(fn => fn)
         )
 
-        // org.scalajs.dom.console.log("OPTIONS", options)
-
-        val table =
-          useTableJS[T](options)
-
-        table
+        useReactTableJS[T](options)
       }
-      .buildReturning((_, _, _, table) => table)
-}

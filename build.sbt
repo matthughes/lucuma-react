@@ -339,7 +339,7 @@ lazy val tanstackTable = project
     stUseScalaJsDom          := true,
     stFlavour                := Flavour.ScalajsReact,
     stReactEnableTreeShaking := Selection.All,
-    stMinimize               := Selection.AllExcept("@tanstack/react-table"),
+    stMinimize               := Selection.AllExcept("@tanstack/react-table", "@tanstack/react-virtual"),
     Compile / doc / sources  := Seq(),
     Compile / scalacOptions += "-language:implicitConversions",
     yarnSettings
