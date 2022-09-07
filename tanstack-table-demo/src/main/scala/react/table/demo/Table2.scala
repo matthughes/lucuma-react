@@ -6,17 +6,12 @@ package react.table.demo
 import japgolly.scalajs.react.*
 import japgolly.scalajs.react.vdom.html_<^.*
 import react.common.style.Css
-// import reactST.reactTable.HTMLTable
-// import reactST.reactTable.TableDef
-// import reactST.reactTable.*
 import lucuma.react.table.*
 import react.common.*
 
 object Table2:
-  private def rowClassEvenOdd[D]: (Int, D) => Css = (i, _) =>
+  private def rowClassEvenOdd[T]: (Int, T) => Css = (i, _) =>
     if (i % 2 == 0) Css("even") else Css("odd")
-
-  // private val VirtualizedTableDef = TableDef[Person].withBlockLayout
 
   val component =
     ScalaFnComponent
@@ -31,22 +26,15 @@ object Table2:
       )
       // rows
       .useMemoBy((people, _) => people)((_, _) => identity)
-      .useReactTableBy((_, cols, rows) => TableOptions(cols, rows))
+      .useReactTableBy((_, cols, rows) => TableOptions(cols, rows, enableSorting = true))
       .render((_, _, _, table) =>
         React.Fragment(
           <.h2("Virtualized Table"),
-          HTMLTableVirtualized(table, containerClazz = Css("container"))
+          HTMLTableVirtualized(
+            table,
+            containerClass = Css("container"),
+            rowClassFn = rowClassEvenOdd
+          )
         )
-        // HTMLTable.virtualized(VirtualizedTableDef)(
-        //   tableClass = Css("virtualized"),
-        //   rowClassFn = rowClassEvenOdd,
-        //   headerCellFn = Some(HTMLTable.basicHeaderCellFn(useDiv = true))
-        // )(tableInstance)
+      //   rowClassFn = rowClassEvenOdd,
       )
-
-  // val component = ScalaFnComponent[List[Person]] { people =>
-  //   React.Fragment(
-  //     <.h2("Virtualized Table"),
-  //     VirtualizedTable(people)
-  //   )
-  // }

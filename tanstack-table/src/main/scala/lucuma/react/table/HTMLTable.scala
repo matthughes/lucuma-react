@@ -28,13 +28,17 @@ trait VirtualOptions /*[S, I]*/ extends js.Object:
 def useVirtualizerJS[T](options: VirtualOptions): rawVirtual.mod.Virtualizer[Any, Any] =
   js.native
 
-final case class HTMLTable[T](table: raw.mod.Table[T], clazz: Css = Css.Empty)
-    extends ReactFnProps(HTMLTable.component)
+final case class HTMLTable[T](
+  table:      raw.mod.Table[T],
+  tableClass: Css = Css.Empty,
+  rowClassFn: (Int, T) => Css = (_, _: T) => Css.Empty
+) extends ReactFnProps(HTMLTable.component)
 
 final case class HTMLTableVirtualized[T](
   table:          raw.mod.Table[T],
-  containerClazz: Css = Css.Empty,
-  clazz:          Css = Css.Empty
+  containerClass: Css = Css.Empty,
+  tableClass:     Css = Css.Empty,
+  rowClassFn:     (Int, T) => Css = (_, _: T) => Css.Empty
 ) extends ReactFnProps(HTMLTableVirtualized.component)
 
 private def sortIndicator[T](col: raw.mod.Column[T, ?]): TagMod =
@@ -48,11 +52,12 @@ private def sortIndicator[T](col: raw.mod.Column[T, ?]): TagMod =
 private def render[T](
   table:         raw.mod.Table[T],
   rows:          js.Array[raw.mod.Row[T]],
-  clazz:         Css = Css.Empty,
+  tableClass:    Css = Css.Empty,
+  rowClassFn:    (Int, T) => Css = (_, _: T) => Css.Empty,
   paddingTop:    Option[Int] = none,
   paddingBottom: Option[Int] = none
 ) =
-  <.table(clazz)(
+  <.table(tableClass)(
     <.thead(
       table
         .getHeaderGroups()
@@ -95,7 +100,7 @@ private def render[T](
     <.tbody(paddingTop.filter(_ > 0).map(p => <.tr(<.td(^.height := s"${p}px"))).whenDefined)(
       rows
         .map(row =>
-          <.tr(^.key := row.id)(
+          <.tr(^.key := row.id, rowClassFn(row.index.toInt, row.original))(
             row
               .getVisibleCells()
               .map(cell =>
@@ -141,7 +146,7 @@ object HTMLTable:
 
   private def componentBuilder[T] =
     ScalaFnComponent[Props[T]](props =>
-      render(props.table, props.table.getRowModel().rows, props.clazz)
+      render(props.table, props.table.getRowModel().rows, props.tableClass, props.rowClassFn)
     )
 
   private val component = componentBuilder[Any]
@@ -171,18 +176,32 @@ object HTMLTableVirtualized:
     ScalaFnComponent
       .withHooks[Props[T]]
       .useRefToVdom[HTMLDivElement]
-      .useMemoBy((_, _) => ())((props, ref) =>
-        _ =>
-          useVirtualizerJS(
-            new VirtualOptions {
-              override val count            = props.table.getRowModel().rows.length
-              override val estimateSize     = _ => 24
-              override val getScrollElement = () => ref.raw.current.asInstanceOf[HTMLDivElement]
-              override val overscan         = 10
-            }
-          )
-      )
-      .render { (props, ref, virtualizer) =>
+      // .useMemoBy((_, _) => ())((props, ref) =>
+      //   _ =>
+      //     useVirtualizerJS(
+      //       new VirtualOptions {
+      //         override val count            = props.table.getRowModel().rows.length
+      //         override val estimateSize     = _ => 24
+      //         override val getScrollElement =
+      //           () => {
+      //             println("hello!")
+      //             ref.get.runNow().orNull // .raw.current.asInstanceOf[HTMLDivElement]
+      //           }
+      //         override val overscan         = 10
+      //       }
+      //     )
+      // )
+      .render { (props, ref) => // (props, ref, virtualizer) =>
+        val virtualizer = useVirtualizerJS(
+          new VirtualOptions {
+            override val count            = props.table.getRowModel().rows.length
+            override val estimateSize     = _ => 24
+            override val getScrollElement =
+              () => ref.get.runNow().orNull // .raw.current.asInstanceOf[HTMLDivElement]
+            override val overscan         = 10
+          }
+        )
+
         val rows          = props.table.getRowModel().rows
         val virtualRows   = virtualizer.getVirtualItems()
         val totalSize     = virtualizer.getTotalSize().toInt
@@ -193,11 +212,12 @@ object HTMLTableVirtualized:
             totalSize - virtualRows.lastOption.map(_.end.toInt).getOrElse(0)
           else 0
 
-        <.div.withRef(ref)(props.containerClazz)(
+        <.div.withRef(ref)(props.containerClass)(
           render(
             props.table,
             virtualRows.map(virtualItem => rows(virtualItem.index.toInt)),
-            props.clazz,
+            props.tableClass,
+            props.rowClassFn,
             paddingTop.some,
             paddingBottom.some
           )
