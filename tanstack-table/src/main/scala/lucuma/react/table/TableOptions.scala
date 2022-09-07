@@ -22,16 +22,21 @@ case class TableOptions[T](
   state:                js.UndefOr[raw.anon.PartialTableState] = js.undefined,
   initialState:         js.UndefOr[raw.mod.InitialTableState] = js.undefined,
   // Sorting
-  enableMultiRemove:    js.UndefOr[Boolean] = js.undefined,
-  enableMultiSort:      js.UndefOr[Boolean] = js.undefined,
   enableSorting:        js.UndefOr[Boolean] = js.undefined,
+  enableMultiSort:      js.UndefOr[Boolean] = js.undefined,
   enableSortingRemoval: js.UndefOr[Boolean] = js.undefined,
+  enableMultiRemove:    js.UndefOr[Boolean] = js.undefined,
   getSortedRowModel:    js.UndefOr[raw.mod.Table[Any] => js.Function0[raw.mod.RowModel[Any]]] =
     js.undefined,
   isMultiSortEvent:     js.UndefOr[js.Function1[ /* e */ Any, Boolean]] = js.undefined,
   manualSorting:        js.UndefOr[Boolean] = js.undefined,
   maxMultiSortColCount: js.UndefOr[Double] = js.undefined,
   onSortingChange:      js.UndefOr[raw.mod.OnChangeFn[raw.mod.SortingState]] = js.undefined,
-  sortDescFirst:        js.UndefOr[Boolean] = js.undefined
+  sortDescFirst:        js.UndefOr[Boolean] = js.undefined,
+  // Expanding
+  enableExpanding:      js.UndefOr[Boolean] = js.undefined,
+  getExpandedRowModel:  js.UndefOr[raw.mod.Table[Any] => js.Function0[raw.mod.RowModel[Any]]] =
+    js.undefined,
+  getSubRows:           js.UndefOr[T => List[T]] = js.undefined // Undocumented!
 )
 // There's no toJS method here: JS version is constructed manually in the Hook with memoized columns and data.

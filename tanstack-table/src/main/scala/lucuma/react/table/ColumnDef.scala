@@ -21,9 +21,9 @@ sealed trait ColumnDef[T, A]:
 object ColumnDef:
   case class Single[T, A](
     id:              String,
-    accessor:        T => A,
+    accessor:        js.UndefOr[T => A] = js.undefined,
     header:          js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
-    cell:            raw.mod.CellContext[T, A] => VdomNode,
+    cell:            js.UndefOr[raw.mod.CellContext[T, A] => VdomNode] = js.undefined,
     footer:          js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
     meta:            js.UndefOr[Any] = js.undefined,
     // Sorting
@@ -52,9 +52,9 @@ object ColumnDef:
     def toJS: ColumnDefJS[T, A] = {
       val p: ColumnDefJS[T, A] = new js.Object().asInstanceOf[ColumnDefJS[T, A]]
       p.id = id
-      p.accessorFn = accessor
+      accessor.foreach(fn => p.accessorFn = fn)
       header.foreach(fn => p.header = fn.andThen(_.rawNode))
-      p.cell = cell.andThen(_.rawNode)
+      cell.foreach(fn => p.cell = fn.andThen(_.rawNode))
       footer.foreach(fn => p.footer = fn.andThen(_.rawNode))
       meta.foreach(v => p.meta = v)
       // Sorting
@@ -90,9 +90,9 @@ object ColumnDef:
   class Applied[T]:
     def apply[A](
       id:              String,
-      accessor:        T => A,
+      accessor:        js.UndefOr[T => A] = js.undefined,
       header:          js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
-      cell:            raw.mod.CellContext[T, A] => VdomNode,
+      cell:            js.UndefOr[raw.mod.CellContext[T, A] => VdomNode] = js.undefined,
       footer:          js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
       meta:            js.UndefOr[Any] = js.undefined,
       // Sorting
@@ -103,16 +103,17 @@ object ColumnDef:
       // sortUndefined:   js.UndefOr[false | -1 | 1] = js.undefined,
       sortingFn:       js.UndefOr[raw.mod.SortingFn[A]] = js.undefined
     ): Single[T, A] =
-      Single(id,
-             accessor,
-             header,
-             cell,
-             footer,
-             meta,
-             enableMultiSort,
-             enableSorting,
-             invertSorting,
-             sortDescFirst,
-             //  sortUndefined,
-             sortingFn
+      Single(
+        id,
+        accessor,
+        header,
+        cell,
+        footer,
+        meta,
+        enableMultiSort,
+        enableSorting,
+        invertSorting,
+        sortDescFirst,
+        //  sortUndefined,
+        sortingFn
       )

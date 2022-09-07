@@ -1,44 +1,66 @@
 // Copyright (c) 2016-2022 Association of Universities for Research in Astronomy, Inc. (AURA)
 // For license information see LICENSE or https://opensource.org/licenses/BSD-3-Clause
 
-// package react.table.demo
+package react.table.demo
 
-// import japgolly.scalajs.react._
-// import japgolly.scalajs.react.vdom.html_<^._
-// import react.common.style.Css
-// import reactST.reactTable.HTMLTable
-// import reactST.reactTable.TableDef
-// import reactST.reactTable._
+import japgolly.scalajs.react.*
+import japgolly.scalajs.react.vdom.html_<^.*
+import react.common.style.Css
+import lucuma.react.table.*
+import react.common.*
 
-// object Table3 {
-
-//   private val SortedVirtualizedTableDef = TableDef[Person].withSortBy.withBlockLayout
-
-//   private val SortedVirtualizedTable =
-//     ScalaFnComponent
-//       .withHooks[List[Person]]
-//       // cols
-//       .useMemo(())(_ =>
-//         List(
-//           SortedVirtualizedTableDef.Column("first", _.first).setHeader("First").setWidth(100),
-//           SortedVirtualizedTableDef.Column("last", _.last).setHeader("Last").setWidth(100),
-//           SortedVirtualizedTableDef.Column("age", _.age).setHeader("Age").setWidth(75)
-//         )
-//       )
-//       // rows
-//       .useMemoBy((people, _) => people)((_, _) => people => people)
-//       .useTableBy((_, cols, rows) => SortedVirtualizedTableDef(cols, rows))
-//       .render((_, _, _, tableInstance) =>
-//         HTMLTable.virtualized(SortedVirtualizedTableDef)(
-//           tableClass = Css("virtualized"),
-//           headerCellFn = Some(HTMLTable.sortableHeaderCellFn(useDiv = true))
-//         )(tableInstance)
-//       )
-
-//   val component = ScalaFnComponent[List[Person]] { people =>
-//     React.Fragment(
-//       <.h2("Sortable Virtualized Table"),
-//       SortedVirtualizedTable(people)
-//     )
-//   }
-// }
+object Table3:
+  val component =
+    ScalaFnComponent
+      .withHooks[List[Expandable[Person]]]
+      // cols
+      .useMemo(())(_ =>
+        List(
+          ColumnDef[Expandable[Person]].apply[Nothing](
+            "expander",
+            cell = cell =>
+              if (cell.row.getCanExpand())
+                <.span(
+                  ^.onClick --> Callback(cell.row.getToggleExpandedHandler()()),
+                  if (cell.row.getIsExpanded()) "👇"
+                  else "👉"
+                )
+              else ""
+          ),
+          // .setHeader(headerProps =>
+          //   <.span(headerProps.getToggleAllRowsExpandedProps(),
+          //          if (headerProps.isAllRowsExpanded) "👇" else "👉"
+          //   )
+          // )
+          // .setCell(cell =>
+          //   if (cell.row.canExpand)
+          //     <.span(cell.row.getToggleRowExpandedProps(),
+          //            if (cell.row.isExpanded.contains(true)) "👇" else "👉"
+          //     )
+          //   else ""
+          // )
+          // .setWidth(50),
+          ColumnDef[Expandable[Person]]("first", _.value.first, _ => "First"), // setWidth(100),
+          ColumnDef[Expandable[Person]]("last", _.value.last, _ => "Last"),    // .setWidth(100),
+          ColumnDef[Expandable[Person]]("age", _.value.age, _ => "Age")        // .setWidth(50)
+        )
+      )
+      // rows
+      .useMemoBy((people, _) => people)((_, _) => identity)
+      .useReactTableBy((_, cols, rows) =>
+        TableOptions(cols,
+                     rows,
+                     enableExpanding = true,
+                     getSubRows = _.subRows.toOption.map(_.toList).getOrElse(List.empty)
+        )
+      )
+      .render((_, _, _, table) =>
+        React.Fragment(
+          <.h2("Table with Expanding Rows"),
+          HTMLTableVirtualized(table, containerClass = Css("container"))
+        )
+        // HTMLTable.virtualized(ExpandedTableDef)(
+        //   tableClass = Css("virtualized"),
+        //   headerCellFn = Some(HTMLTable.sortableHeaderCellFn(useDiv = true))
+        // )(tableInstance)
+      )

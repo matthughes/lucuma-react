@@ -34,7 +34,11 @@ object TableHook:
           initialState = props.initialState,
           // Sorting
           enableSorting = props.enableSorting,
-          getSortedRowModel = props.getSortedRowModel.map(fn => fn)
+          getSortedRowModel = props.getSortedRowModel.map(fn => fn),
+          // Expanding
+          enableExpanding = props.enableExpanding,
+          getExpandedRowModel = props.getExpandedRowModel.map(fn => fn),
+          getSubRows = props.getSubRows.map(fn => fn.andThen(_.toJSArray))
         )
 
         useReactTableJS[T](options)

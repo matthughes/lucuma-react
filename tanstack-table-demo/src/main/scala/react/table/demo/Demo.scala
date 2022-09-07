@@ -26,7 +26,7 @@ object Demo:
 
   val randomData = RandomData.randomPeople(1000)
 
-  // val randomExpandableData = RandomData.randomExpandablePeople(1000)
+  val randomExpandableData = RandomData.randomExpandablePeople(1000)
 
   @JSExport
   def main(): Unit = {
@@ -41,10 +41,8 @@ object Demo:
     <.div(
       <.h1("Demo for scalajs-tanstack-table"),
       Table1.component(guitars),
-      Table2.component(randomData)
-      // Table3.component(randomData),
-      // Table4.component(randomData),
-      // Table5.component(randomExpandableData)
+      Table2.component(randomData),
+      Table3.component(randomExpandableData)
     )
       .renderIntoDOM(container)
 

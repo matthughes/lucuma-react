@@ -21,15 +21,15 @@ object Table1:
         List(
           ColumnDef[Guitar]("id", _.id, _ => "Id", ctx => s"g-${ctx.value}").sortAsc,
           // TODO Facade for Cell/Header, Context instead of extension for .value?
-          ColumnDef[Guitar]("make", _.make, _ => "Make", _.value),
-          ColumnDef[Guitar]("model", _.model, _ => "Model", _.value).sortAscBy(_.length),
+          ColumnDef[Guitar]("make", _.make, _ => "Make"),
+          ColumnDef[Guitar]("model", _.model, _ => "Model").sortAscBy(_.length),
           ColumnDef.Group[Guitar](
             "details",
             _ => "Details",
             List(
-              ColumnDef("year", _.details.year, _ => "Year", _.value),
-              ColumnDef("pickups", _.details.pickups, _ => "Pickups", _.value),
-              ColumnDef("color", _.details.color, _ => "Color", _.value, enableSorting = false)
+              ColumnDef("year", _.details.year, _ => "Year"),
+              ColumnDef("pickups", _.details.pickups, _ => "Pickups"),
+              ColumnDef("color", _.details.color, _ => "Color", enableSorting = false)
             )
           )
         )

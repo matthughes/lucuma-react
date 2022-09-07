@@ -32,6 +32,11 @@ trait TableOptionsJS[T] extends js.Object:
   var maxMultiSortColCount: js.UndefOr[Double]                              = js.undefined
   var onSortingChange: js.UndefOr[raw.mod.OnChangeFn[raw.mod.SortingState]] = js.undefined
   var sortDescFirst: js.UndefOr[Boolean]                                    = js.undefined
+  var enableExpanding: js.UndefOr[Boolean]                                  = js.undefined
+  var getExpandedRowModel: js.UndefOr[
+    js.Function1[raw.mod.Table[Any], js.Function0[raw.mod.RowModel[Any]]]
+  ]                                                                         = js.undefined
+  var getSubRows: js.UndefOr[js.Function1[T, js.Array[T]]]                  = js.undefined // Undocumented!
 
 object TableOptionsJS:
   def apply[T](
@@ -56,7 +61,13 @@ object TableOptionsJS:
     manualSorting:        js.UndefOr[Boolean] = js.undefined,
     maxMultiSortColCount: js.UndefOr[Double] = js.undefined,
     onSortingChange:      js.UndefOr[raw.mod.OnChangeFn[raw.mod.SortingState]] = js.undefined,
-    sortDescFirst:        js.UndefOr[Boolean] = js.undefined
+    sortDescFirst:        js.UndefOr[Boolean] = js.undefined,
+    // Expanding
+    enableExpanding:      js.UndefOr[Boolean] = js.undefined,
+    getExpandedRowModel:  js.UndefOr[
+      js.Function1[raw.mod.Table[Any], js.Function0[raw.mod.RowModel[Any]]]
+    ] = js.undefined,
+    getSubRows:           js.UndefOr[js.Function1[T, js.Array[T]]] = js.undefined // Undocumented!
   ): TableOptionsJS[T] = {
     val p: TableOptionsJS[T] = new js.Object().asInstanceOf[TableOptionsJS[T]]
     p.columns = columns
@@ -71,5 +82,10 @@ object TableOptionsJS:
     // We are always defining a sortedRowModel
     p.enableSorting = enableSorting.getOrElse(false)
     p.getSortedRowModel = getSortedRowModel.getOrElse(rawReact.mod.getSortedRowModel())
+    // Expanding
+    // TODO MISSING PROPS!!!
+    p.enableExpanding = enableExpanding.getOrElse(false)
+    p.getExpandedRowModel = getExpandedRowModel.getOrElse(rawReact.mod.getExpandedRowModel())
+    getSubRows.foreach(fn => p.getSubRows = fn)
     p
   }

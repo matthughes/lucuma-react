@@ -19,9 +19,9 @@ object Table2:
       // cols
       .useMemo(())(_ =>
         List(
-          ColumnDef[Person]("first", _.first, _ => "First", _.value), // .setWidth(100),
-          ColumnDef[Person]("last", _.last, _ => "Last", _.value),    // .setWidth(100),
-          ColumnDef[Person]("age", _.age, _ => "Age", _.value)        // .setWidth(50),
+          ColumnDef[Person]("first", _.first, _ => "First"), // .setWidth(100),
+          ColumnDef[Person]("last", _.last, _ => "Last"),    // .setWidth(100),
+          ColumnDef[Person]("age", _.age, _ => "Age")        // .setWidth(50),
         )
       )
       // rows
@@ -29,7 +29,7 @@ object Table2:
       .useReactTableBy((_, cols, rows) => TableOptions(cols, rows, enableSorting = true))
       .render((_, _, _, table) =>
         React.Fragment(
-          <.h2("Virtualized Table"),
+          <.h2("Sortable Virtualized Table"),
           HTMLTableVirtualized(
             table,
             containerClass = Css("container"),

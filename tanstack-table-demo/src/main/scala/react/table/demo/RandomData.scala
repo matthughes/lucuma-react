@@ -3,7 +3,7 @@
 
 package react.table.demo
 
-// import reactST.reactTable.Expandable
+import lucuma.react.table.Expandable
 
 import scala.util.Random.nextInt
 
@@ -15,13 +15,13 @@ object RandomData {
 
   def newPerson(id: Int) = Person(id, getRandElt(adjs), getRandElt(nouns), getAge)
 
-  // def newExpandablePerson(id: Int) =
-  //   Expandable(newPerson(id))
-  //     .withSubRows((0 to nextInt(5)).toList.map(newPerson).map(Expandable.apply))
+  def newExpandablePerson(id: Int) =
+    Expandable(newPerson(id))
+      .withSubRows((0 to nextInt(5)).toList.map(newPerson).map(Expandable.apply))
 
   def randomPeople(count: Int) = (0 to count).map(newPerson).toList
 
-  // def randomExpandablePeople(count: Int) = (0 to count).map(newExpandablePerson).toList
+  def randomExpandablePeople(count: Int) = (0 to count).map(newExpandablePerson).toList
 
   // format: off
   val adjs = List("autumn", "hidden", "bitter", "misty", "silent",
