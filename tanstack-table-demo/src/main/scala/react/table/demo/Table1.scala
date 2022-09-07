@@ -45,6 +45,7 @@ object Table1:
       )
       // rows
       .useMemoBy((guitars, _) => guitars)((_, _) => identity)
+      // table
       .customBy { (_, cols, rows) =>
         TableHook.useTableHook(
           TableOptions(
@@ -56,9 +57,6 @@ object Table1:
           )
         )
       }
-      // .useTableBy((_, cols, rows) =>
-      //   SortedTableDef(cols, rows, Reusable.always(_.setInitialState(sortedTableState)))
-      // )
       .render { (_, _, _, table) =>
         React.Fragment(
           <.h2("Sortable table"),

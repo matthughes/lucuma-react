@@ -8,15 +8,21 @@ import react.common.ReactFnProps
 import japgolly.scalajs.react.*
 import japgolly.scalajs.react.vdom.html_<^.*
 import react.common.ReactFnProps
-import reactST.tanstackReactTable.mod.flexRender
-import reactST.tanstackTableCore.mod.HeaderContext
-import reactST.tanstackTableCore.mod.CellContext
-import reactST.tanstackReactTable.mod.Renderable
+import reactST.{tanstackReactTable => rawReact}
+import reactST.{tanstackTableCore => raw}
 
 final case class HTMLTable[T](table: raw.mod.Table[T]) extends ReactFnProps(HTMLTable.component)
 
 object HTMLTable:
   private type Props[T] = HTMLTable[T]
+
+  private def sortIndicator[T](col: raw.mod.Column[T, ?]): TagMod =
+    col.getIsSorted().asInstanceOf[Boolean | String] match
+      case sorted: String =>
+        val index   = if (col.getSortIndex() > 0) (col.getSortIndex() + 1).toInt.toString else ""
+        val ascDesc = if (sorted == "desc") "\u2191" else "\u2193"
+        <.span(s" $index$ascDesc")
+      case _              => TagMod.empty
 
   private def componentBuilder[T] =
     ScalaFnComponent[Props[T]](props =>
@@ -40,13 +46,14 @@ object HTMLTable:
                             )
                             .whenDefined
                         )(
-                          flexRender(
+                          rawReact.mod.flexRender(
                             header.column.columnDef
-                              .asInstanceOf[HeaderContext[T, Any]]
+                              .asInstanceOf[raw.mod.HeaderContext[T, Any]]
                               .header
-                              .asInstanceOf[Renderable[HeaderContext[T, Any]]],
-                            header.getContext().asInstanceOf[HeaderContext[T, Any]]
-                          )
+                              .asInstanceOf[rawReact.mod.Renderable[raw.mod.HeaderContext[T, Any]]],
+                            header.getContext().asInstanceOf[raw.mod.HeaderContext[T, Any]]
+                          ),
+                          sortIndicator(header.column)
                         )
                       )
                     )
@@ -66,10 +73,10 @@ object HTMLTable:
                   .getVisibleCells()
                   .map(cell =>
                     <.td(^.key := cell.id)(
-                      flexRender(
+                      rawReact.mod.flexRender(
                         cell.column.columnDef.cell
-                          .asInstanceOf[Renderable[CellContext[T, Any]]],
-                        cell.getContext().asInstanceOf[CellContext[T, Any]]
+                          .asInstanceOf[rawReact.mod.Renderable[raw.mod.CellContext[T, Any]]],
+                        cell.getContext().asInstanceOf[raw.mod.CellContext[T, Any]]
                       )
                     )
                   )
@@ -86,9 +93,9 @@ object HTMLTable:
                 footerGroup.headers.map { footer =>
                   <.th(^.key := footer.id, ^.colSpan := footer.colSpan.toInt)(
                     TagMod.unless(footer.isPlaceholder)(
-                      flexRender(
+                      rawReact.mod.flexRender(
                         footer.column.columnDef.footer
-                          .asInstanceOf[Renderable[HeaderContext[T, Any]]],
+                          .asInstanceOf[rawReact.mod.Renderable[raw.mod.HeaderContext[T, Any]]],
                         footer.getContext()
                       )
                     )
