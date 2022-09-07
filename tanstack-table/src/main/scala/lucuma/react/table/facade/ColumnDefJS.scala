@@ -17,3 +17,10 @@ trait ColumnDefJS[T, A] extends js.Object:
   var columns: js.UndefOr[js.Array[ColumnDefJS[T, ?]]]
   var footer: js.UndefOr[js.Function1[raw.mod.HeaderContext[T, A], Node]]
   var meta: js.UndefOr[Any]
+  // Sorting
+  var enableMultiSort: js.UndefOr[Boolean]        = js.undefined
+  var enableSorting: js.UndefOr[Boolean]          = js.undefined
+  var invertSorting: js.UndefOr[Boolean]          = js.undefined
+  var sortDescFirst: js.UndefOr[Boolean]          = js.undefined
+  var sortUndefined: js.UndefOr[false | -1 | 1]   = js.undefined
+  var sortingFn: js.UndefOr[raw.mod.SortingFn[A]] = js.undefined

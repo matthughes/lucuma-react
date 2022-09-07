@@ -28,40 +28,19 @@ object Table1:
       // cols
       .useMemo(())(_ =>
         List(
-          ColumnDef[Guitar]("id", _.id, _ => "Id", ctx => s"g-${ctx.value}"),
-          // TODO Facade for Cell/Header, Context
+          ColumnDef[Guitar]("id", _.id, _ => "Id", ctx => s"g-${ctx.value}").sortAsc,
+          // TODO Facade for Cell/Header, Context instead of extension?
           ColumnDef[Guitar]("make", _.make, _ => "Make", _.value),
-          ColumnDef[Guitar]("model", _.model, _ => "Model", _.value),
+          ColumnDef[Guitar]("model", _.model, _ => "Model", _.value).sortAscBy(_.length),
           ColumnDef.Group[Guitar](
             "details",
             _ => "Details",
             List(
               ColumnDef("year", _.details.year, _ => "Year", _.value),
               ColumnDef("pickups", _.details.pickups, _ => "Pickups", _.value),
-              ColumnDef("color", _.details.color, _ => "Color", _.value)
+              ColumnDef("color", _.details.color, _ => "Color", _.value, enableSorting = false)
             )
           )
-          // SortedTableDef
-          //   .Column("id", _.id)
-          //   .setCell(cellProps => <.span(s"g-${cellProps.value}"))
-          //   .setSortByAuto
-          //   .setHeader("Id"),
-          // SortedTableDef
-          //   .Column("make", _.make)
-          //   .setHeader("Make")
-          //   .setCell(cell => <.span(s"${cell.value}"))
-          //   .setSortByFn(_.toString),
-          // SortedTableDef.Column("model", _.model).setHeader("Model"),
-          // SortedTableDef
-          //   .ColumnGroup(
-          //     SortedTableDef.Column("year", _.details.year).setHeader("Year"),
-          //     SortedTableDef.Column("pickups", _.details.pickups).setHeader("Pickups"),
-          //     SortedTableDef
-          //       .Column("color", _.details.color)
-          //       .setHeader("Color")
-          //       .setDisableSortBy(true)
-          //   )
-          //   .setHeader("Details")
         )
       )
       // rows
