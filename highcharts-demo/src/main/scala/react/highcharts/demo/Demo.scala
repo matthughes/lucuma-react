@@ -3,6 +3,16 @@
 
 package react.highcharts.demo
 
+import japgolly.scalajs.react.callback.Callback
+import org.scalajs.dom
+import react.common._
+import react.highcharts.Chart
+import react.highcharts.Highcharts
+import react.highcharts.WrapProceed
+import react.highcharts.implicits._
+import react.highcharts.mods.seriesLabel.SeriesLabelPoint
+import react.highcharts.mods.seriesLabel.SeriesLabelSeries
+import react.highcharts.seriesLabel
 import reactST.highcharts.highchartsStrings.areaspline
 import reactST.highcharts.mod.AxisTypeValue
 import reactST.highcharts.mod.CSSObject
@@ -36,16 +46,6 @@ import reactST.highcharts.mod.XAxisPlotBandsOptions
 import reactST.highcharts.mod.YAxisLabelsOptions
 import reactST.highcharts.mod.YAxisOptions
 import reactST.highcharts.mod.YAxisTitleOptions
-import japgolly.scalajs.react.callback.Callback
-import org.scalajs.dom
-import react.common._
-import react.highcharts.Chart
-import react.highcharts.Highcharts
-import react.highcharts.WrapProceed
-import react.highcharts.implicits._
-import react.highcharts.mods.seriesLabel.SeriesLabelPoint
-import react.highcharts.mods.seriesLabel.SeriesLabelSeries
-import react.highcharts.seriesLabel
 
 import scala.scalajs.js
 

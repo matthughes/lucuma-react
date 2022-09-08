@@ -5,10 +5,10 @@ package react.table.demo
 
 import japgolly.scalajs.react.*
 import japgolly.scalajs.react.vdom.html_<^.*
-import reactST.tanstackTableCore.mod.InitialTableState
-import reactST.tanstackTableCore.mod.ColumnSort
 import lucuma.react.table.*
 import react.common.*
+import reactST.tanstackTableCore.mod.ColumnSort
+import reactST.tanstackTableCore.mod.InitialTableState
 
 import scalajs.js
 
@@ -19,7 +19,7 @@ object Table1:
       // cols
       .useMemo(())(_ =>
         List(
-          ColumnDef[Guitar]("id", _.id, _ => "Id", ctx => s"g-${ctx.value}").sortAsc,
+          ColumnDef[Guitar]("id", _.id, "Id1", ctx => s"g-${ctx.value}").sortAsc,
           // TODO Facade for Cell/Header, Context instead of extension for .value?
           ColumnDef[Guitar]("make", _.make, _ => "Make"),
           ColumnDef[Guitar]("model", _.model, _ => "Model").sortAscBy(_.length),
@@ -27,9 +27,9 @@ object Table1:
             "details",
             _ => "Details",
             List(
-              ColumnDef("year", _.details.year, _ => "Year"),
-              ColumnDef("pickups", _.details.pickups, _ => "Pickups"),
-              ColumnDef("color", _.details.color, _ => "Color", enableSorting = false)
+              ColumnDef[Guitar]("year", _.details.year, _ => "Year"),
+              ColumnDef[Guitar]("pickups", _.details.pickups, _ => "Pickups"),
+              ColumnDef[Guitar]("color", _.details.color, _ => "Color", enableSorting = false)
             )
           )
         )

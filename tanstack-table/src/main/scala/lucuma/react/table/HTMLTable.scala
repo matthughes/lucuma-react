@@ -4,18 +4,19 @@
 package lucuma.react.table
 
 import cats.syntax.all.*
-import reactST.{tanstackTableCore => raw}
-import react.common.*
 import japgolly.scalajs.react.*
 import japgolly.scalajs.react.vdom.html_<^.*
-import reactST.{tanstackReactTable => rawReact}
-import reactST.{tanstackTableCore => raw}
-import scalajs.js
 import org.scalajs.dom.HTMLDivElement
-import reactST.{tanstackReactVirtual => rawVirtualReact}
-import reactST.{tanstackVirtualCore => rawVirtual}
-import scala.scalajs.js.annotation.JSImport
+import react.common.*
 import react.common.style.Css
+import reactST.{tanstackReactTable => rawReact}
+import reactST.{tanstackReactVirtual => rawVirtualReact}
+import reactST.{tanstackTableCore => raw}
+import reactST.{tanstackVirtualCore => rawVirtual}
+
+import scala.scalajs.js.annotation.JSImport
+
+import scalajs.js
 
 trait VirtualOptions /*[S, I]*/ extends js.Object:
   val count: Int
@@ -91,10 +92,8 @@ private def render[T](
                   )
                 )
               )
-              .toArray: _*
           )
         )
-        .toArray: _*
     ),
     <.tbody(paddingTop.filter(_ > 0).map(p => <.tr(<.td(^.height := s"${p}px"))).whenDefined)(
       rows
@@ -111,10 +110,8 @@ private def render[T](
                   )
                 )
               )
-              .toArray: _*
           )
         )
-        .toArray: _*
     )(
       paddingBottom.filter(_ > 0).map(p => <.tr(<.td(^.height := s"${p}px"))).whenDefined
     ),
@@ -133,10 +130,9 @@ private def render[T](
                   )
                 )
               )
-            }.toArray: _*
+            }
           )
         )
-        .toArray: _*
     )
   )
 

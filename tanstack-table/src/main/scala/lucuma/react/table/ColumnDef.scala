@@ -4,16 +4,16 @@
 package lucuma.react.table
 
 import japgolly.scalajs.react.vdom.VdomNode
-import reactST.{tanstackTableCore => raw}
 import lucuma.react.table.facade.*
+import reactST.tanstackTableCore.tanstackTableCoreStrings.max
+import reactST.{tanstackTableCore => raw}
 
 import scalajs.js
 import scalajs.js.JSConverters.*
-import reactST.tanstackTableCore.tanstackTableCoreStrings.max
 
 sealed trait ColumnDef[T, A]:
   val id: String
-  val header: js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode]
+  val header: js.UndefOr[String | (raw.mod.HeaderContext[T, A] => VdomNode)]
   val footer: js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode]
   val meta: js.UndefOr[Any]
 
@@ -23,7 +23,7 @@ object ColumnDef:
   case class Single[T, A](
     id:              String,
     accessor:        js.UndefOr[T => A] = js.undefined,
-    header:          js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
+    header:          js.UndefOr[String | (raw.mod.HeaderContext[T, A] => VdomNode)] = js.undefined,
     cell:            js.UndefOr[raw.mod.CellContext[T, A] => VdomNode] = js.undefined,
     footer:          js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
     meta:            js.UndefOr[Any] = js.undefined,
@@ -59,7 +59,10 @@ object ColumnDef:
       val p: ColumnDefJS[T, A] = new js.Object().asInstanceOf[ColumnDefJS[T, A]]
       p.id = id
       accessor.foreach(fn => p.accessorFn = fn)
-      header.foreach(fn => p.header = fn.andThen(_.rawNode))
+      header match
+        case s: String                                     => p.header = s
+        case fn: (raw.mod.HeaderContext[T, A] => VdomNode) => p.header = fn.andThen(_.rawNode)
+        case _                                             => ()
       cell.foreach(fn => p.cell = fn.andThen(_.rawNode))
       footer.foreach(fn => p.footer = fn.andThen(_.rawNode))
       meta.foreach(v => p.meta = v)
@@ -79,7 +82,7 @@ object ColumnDef:
 
   case class Group[T](
     id:             String,
-    header:         js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
+    header:         js.UndefOr[String | (raw.mod.HeaderContext[T, Nothing] => VdomNode)] = js.undefined,
     columns:        List[ColumnDef[T, ?]],
     footer:         js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
     meta:           js.UndefOr[Any] = js.undefined,
@@ -92,7 +95,10 @@ object ColumnDef:
     def toJS: ColumnDefJS[T, Nothing] = {
       val p: ColumnDefJS[T, Nothing] = new js.Object().asInstanceOf[ColumnDefJS[T, Nothing]]
       p.id = id
-      header.foreach(fn => p.header = fn.andThen(_.rawNode))
+      header match
+        case s: String                                           => p.header = s
+        case fn: (raw.mod.HeaderContext[T, Nothing] => VdomNode) => p.header = fn.andThen(_.rawNode)
+        case _                                                   => ()
       p.columns = columns.map(_.toJS).toJSArray
       footer.foreach(fn => p.footer = fn.andThen(_.rawNode))
       meta.foreach(v => p.meta = v)
@@ -110,7 +116,7 @@ object ColumnDef:
     def apply[A](
       id:              String,
       accessor:        js.UndefOr[T => A] = js.undefined,
-      header:          js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
+      header:          js.UndefOr[String | (raw.mod.HeaderContext[T, A] => VdomNode)] = js.undefined,
       cell:            js.UndefOr[raw.mod.CellContext[T, A] => VdomNode] = js.undefined,
       footer:          js.UndefOr[raw.mod.HeaderContext[T, A] => VdomNode] = js.undefined,
       meta:            js.UndefOr[Any] = js.undefined,

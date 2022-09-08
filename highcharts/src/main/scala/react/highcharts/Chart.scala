@@ -3,16 +3,16 @@
 
 package react.highcharts
 
+import japgolly.scalajs.react._
+import japgolly.scalajs.react.vdom.html_<^._
+import org.scalajs.dom.html
+import react.common.ReactProps
 import reactST.highcharts.anon.TypeofHighcharts
 import reactST.highcharts.anon.TypeofHighchartsAST
 import reactST.highcharts.mod.Chart_
 import reactST.highcharts.mod.HTMLDOMElement
 import reactST.highcharts.mod.Options
 import reactST.highcharts.mod.PointOptionsObject
-import japgolly.scalajs.react._
-import japgolly.scalajs.react.vdom.html_<^._
-import org.scalajs.dom.html
-import react.common.ReactProps
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSImport

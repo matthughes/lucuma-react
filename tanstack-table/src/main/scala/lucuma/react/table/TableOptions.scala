@@ -4,10 +4,8 @@
 package lucuma.react.table
 
 import japgolly.scalajs.react.*
-import reactST.{tanstackTableCore => raw}
-// import reactST.tanstackTableCore.mod.*
-// import reactST.tanstackTableCore.anon.*
 import reactST.{tanstackReactTable => rawReact}
+import reactST.{tanstackTableCore => raw}
 
 import scalajs.js
 import scalajs.js.JSConverters.*

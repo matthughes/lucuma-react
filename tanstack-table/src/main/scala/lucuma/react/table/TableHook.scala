@@ -5,14 +5,14 @@ package lucuma.react.table
 
 import japgolly.scalajs.react.*
 import japgolly.scalajs.react.hooks.CustomHook
-import reactST.tanstackReactTable.mod.useReactTable
-import reactST.{tanstackTableCore => raw}
 import lucuma.react.table.facade.*
+import reactST.tanstackReactTable.mod.useReactTable
+import reactST.tanstackTableCore.tanstackTableCoreStrings.renderFallbackValue
+import reactST.{tanstackTableCore => raw}
 
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters.*
 import scala.scalajs.js.annotation.JSImport
-import reactST.tanstackTableCore.tanstackTableCoreStrings.renderFallbackValue
 
 object TableHook:
   @JSImport("@tanstack/react-table", "useReactTable")

@@ -3,12 +3,12 @@
 
 package react.highcharts
 
-import reactST.highcharts.mod.Options
-import reactST.highcharts.mod.charts
-import reactST.highcharts.mod.{^ => HighCharts, _}
 import japgolly.scalajs.react.test._
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.HTMLElement
+import reactST.highcharts.mod.Options
+import reactST.highcharts.mod.charts
+import reactST.highcharts.mod.{^ => HighCharts, _}
 import utest._
 
 import scala.scalajs.js

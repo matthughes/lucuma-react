@@ -5,9 +5,9 @@ package react.table.demo
 
 import japgolly.scalajs.react.*
 import japgolly.scalajs.react.vdom.html_<^.*
-import react.common.style.Css
 import lucuma.react.table.*
 import react.common.*
+import react.common.style.Css
 
 object Table2:
   private def rowClassEvenOdd[T]: (Int, T) => Css = (i, _) =>
