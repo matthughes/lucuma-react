@@ -4,8 +4,8 @@
 package react.highcharts
 
 import japgolly.scalajs.react.test._
-import org.scalajs.dom.document
 import org.scalajs.dom.HTMLElement
+import org.scalajs.dom.document
 import reactST.highcharts.mod.Options
 import reactST.highcharts.mod.charts
 import reactST.highcharts.mod.{^ => HighCharts, _}
