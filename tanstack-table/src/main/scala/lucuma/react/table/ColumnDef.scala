@@ -9,6 +9,7 @@ import lucuma.react.table.facade.*
 
 import scalajs.js
 import scalajs.js.JSConverters.*
+import reactST.tanstackTableCore.tanstackTableCoreStrings.max
 
 sealed trait ColumnDef[T, A]:
   val id: String
@@ -32,7 +33,12 @@ object ColumnDef:
     invertSorting:   js.UndefOr[Boolean] = js.undefined,
     sortDescFirst:   js.UndefOr[Boolean] = js.undefined,
     // sortUndefined:   js.UndefOr[false | -1 | 1] = js.undefined,
-    sortingFn:       js.UndefOr[raw.mod.SortingFn[A]] = js.undefined
+    sortingFn:       js.UndefOr[raw.mod.SortingFn[A]] = js.undefined,
+    // Column Sizing
+    enableResizing:  js.UndefOr[Boolean] = js.undefined,
+    size:            js.UndefOr[Int] = js.undefined,
+    minSize:         js.UndefOr[Int] = js.undefined,
+    maxSize:         js.UndefOr[Int] = js.undefined
   ) extends ColumnDef[T, A]:
     def sortBy[B](f: A => B, inverted: Boolean)(using ordering: Ordering[B]): ColumnDef[T, A] =
       val sbfn: raw.mod.SortingFn[A] = (r1, r2, col) =>
@@ -64,15 +70,24 @@ object ColumnDef:
       sortDescFirst.foreach(v => p.sortDescFirst = v)
       // sortUndefined.foreach(v => p.sortUndefined = v)
       sortingFn.foreach(fn => p.sortingFn = fn)
+      enableResizing.foreach(v => p.enableResizing = v)
+      size.foreach(v => p.size = v)
+      minSize.foreach(v => p.minSize = v)
+      maxSize.foreach(v => p.maxSize = v)
       p
     }
 
   case class Group[T](
-    id:      String,
-    header:  js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
-    columns: List[ColumnDef[T, ?]],
-    footer:  js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
-    meta:    js.UndefOr[Any] = js.undefined
+    id:             String,
+    header:         js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
+    columns:        List[ColumnDef[T, ?]],
+    footer:         js.UndefOr[raw.mod.HeaderContext[T, Nothing] => VdomNode] = js.undefined,
+    meta:           js.UndefOr[Any] = js.undefined,
+    // Column Sizing
+    enableResizing: js.UndefOr[Boolean] = js.undefined,
+    size:           js.UndefOr[Int] = js.undefined,
+    minSize:        js.UndefOr[Int] = js.undefined,
+    maxSize:        js.UndefOr[Int] = js.undefined
   ) extends ColumnDef[T, Nothing]:
     def toJS: ColumnDefJS[T, Nothing] = {
       val p: ColumnDefJS[T, Nothing] = new js.Object().asInstanceOf[ColumnDefJS[T, Nothing]]
@@ -81,6 +96,10 @@ object ColumnDef:
       p.columns = columns.map(_.toJS).toJSArray
       footer.foreach(fn => p.footer = fn.andThen(_.rawNode))
       meta.foreach(v => p.meta = v)
+      enableResizing.foreach(v => p.enableResizing = v)
+      size.foreach(v => p.size = v)
+      minSize.foreach(v => p.minSize = v)
+      maxSize.foreach(v => p.maxSize = v)
       p
     }
 
@@ -101,7 +120,12 @@ object ColumnDef:
       invertSorting:   js.UndefOr[Boolean] = js.undefined,
       sortDescFirst:   js.UndefOr[Boolean] = js.undefined,
       // sortUndefined:   js.UndefOr[false | -1 | 1] = js.undefined,
-      sortingFn:       js.UndefOr[raw.mod.SortingFn[A]] = js.undefined
+      sortingFn:       js.UndefOr[raw.mod.SortingFn[A]] = js.undefined,
+      // Column Sizing
+      enableResizing:  js.UndefOr[Boolean] = js.undefined,
+      size:            js.UndefOr[Int] = js.undefined,
+      minSize:         js.UndefOr[Int] = js.undefined,
+      maxSize:         js.UndefOr[Int] = js.undefined
     ): Single[T, A] =
       Single(
         id,
@@ -115,5 +139,9 @@ object ColumnDef:
         invertSorting,
         sortDescFirst,
         //  sortUndefined,
-        sortingFn
+        sortingFn,
+        enableResizing,
+        size,
+        minSize,
+        maxSize
       )

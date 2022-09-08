@@ -19,22 +19,22 @@ object Table3:
           ColumnDef[Expandable[Person]].apply[Nothing](
             "expander",
             header = header =>
-              <.span(
+              <.span(^.cursor.pointer)(
                 ^.onClick ==> (e => Callback(header.table.getToggleAllRowsExpandedHandler()(e))),
                 if (header.table.getIsAllRowsExpanded()) "👇" else "👉"
               ),
             cell = cell =>
               if (cell.row.getCanExpand())
-                <.span(
+                <.span(^.cursor.pointer)(
                   ^.onClick --> Callback(cell.row.getToggleExpandedHandler()()),
                   if (cell.row.getIsExpanded()) "👇" else "👉"
                 )
-              else ""
+              else "",
+            size = 50
           ),
-          // .setWidth(50),
-          ColumnDef[Expandable[Person]]("first", _.value.first, _ => "First"), // setWidth(100),
-          ColumnDef[Expandable[Person]]("last", _.value.last, _ => "Last"),    // .setWidth(100),
-          ColumnDef[Expandable[Person]]("age", _.value.age, _ => "Age")        // .setWidth(50)
+          ColumnDef[Expandable[Person]]("first", _.value.first, _ => "First", size = 100),
+          ColumnDef[Expandable[Person]]("last", _.value.last, _ => "Last", size = 100),
+          ColumnDef[Expandable[Person]]("age", _.value.age, _ => "Age", size = 50)
         )
       )
       // rows

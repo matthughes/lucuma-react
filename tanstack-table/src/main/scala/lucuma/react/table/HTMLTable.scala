@@ -45,7 +45,7 @@ private def sortIndicator[T](col: raw.mod.Column[T, ?]): TagMod =
   col.getIsSorted().asInstanceOf[Boolean | String] match
     case sorted: String =>
       val index   = if (col.getSortIndex() > 0) (col.getSortIndex() + 1).toInt.toString else ""
-      val ascDesc = if (sorted == "desc") "\u2191" else "\u2193"
+      val ascDesc = if (sorted == "desc") "↓" else "↑"
       <.span(s" $index$ascDesc")
     case _              => TagMod.empty
 
@@ -65,19 +65,18 @@ private def render[T](
           <.tr(^.key := headerGroup.id)(
             headerGroup.headers
               .map(header =>
-                <.th(^.key     := header.id,
-                     ^.colSpan := header.colSpan.toInt,
-                     ^.width   := s"${header.getSize().toInt}px"
+                <.th(
+                  ^.key     := header.id,
+                  ^.colSpan := header.colSpan.toInt,
+                  ^.width   := s"${header.getSize().toInt}px"
                 )(
                   TagMod.unless(header.isPlaceholder)(
                     <.div(
+                      TagMod(^.cursor.pointer /*, ^.userSelect.none*/ )
+                        .when(header.column.getCanSort()),
                       header.column
                         .getToggleSortingHandler()
-                        .map(handler =>
-                          ^.onClick ==> { e =>
-                            Callback(handler(e))
-                          }
-                        )
+                        .map(handler => ^.onClick ==> (e => Callback(handler(e))))
                         .whenDefined
                     )(
                       rawReact.mod.flexRender(

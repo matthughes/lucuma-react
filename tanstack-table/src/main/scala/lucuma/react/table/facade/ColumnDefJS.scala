@@ -24,3 +24,8 @@ trait ColumnDefJS[T, A] extends js.Object:
   var sortDescFirst: js.UndefOr[Boolean]          = js.undefined
   var sortUndefined: js.UndefOr[false | -1 | 1]   = js.undefined
   var sortingFn: js.UndefOr[raw.mod.SortingFn[A]] = js.undefined
+  // Column Sizing
+  var enableResizing: js.UndefOr[Boolean]         = js.undefined
+  var size: js.UndefOr[Int]                       = js.undefined
+  var minSize: js.UndefOr[Int]                    = js.undefined
+  var maxSize: js.UndefOr[Int]                    = js.undefined
