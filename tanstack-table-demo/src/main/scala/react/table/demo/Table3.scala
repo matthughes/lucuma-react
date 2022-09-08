@@ -18,27 +18,19 @@ object Table3:
         List(
           ColumnDef[Expandable[Person]].apply[Nothing](
             "expander",
+            header = header =>
+              <.span(
+                ^.onClick ==> (e => Callback(header.table.getToggleAllRowsExpandedHandler()(e))),
+                if (header.table.getIsAllRowsExpanded()) "👇" else "👉"
+              ),
             cell = cell =>
               if (cell.row.getCanExpand())
                 <.span(
                   ^.onClick --> Callback(cell.row.getToggleExpandedHandler()()),
-                  if (cell.row.getIsExpanded()) "👇"
-                  else "👉"
+                  if (cell.row.getIsExpanded()) "👇" else "👉"
                 )
               else ""
           ),
-          // .setHeader(headerProps =>
-          //   <.span(headerProps.getToggleAllRowsExpandedProps(),
-          //          if (headerProps.isAllRowsExpanded) "👇" else "👉"
-          //   )
-          // )
-          // .setCell(cell =>
-          //   if (cell.row.canExpand)
-          //     <.span(cell.row.getToggleRowExpandedProps(),
-          //            if (cell.row.isExpanded.contains(true)) "👇" else "👉"
-          //     )
-          //   else ""
-          // )
           // .setWidth(50),
           ColumnDef[Expandable[Person]]("first", _.value.first, _ => "First"), // setWidth(100),
           ColumnDef[Expandable[Person]]("last", _.value.last, _ => "Last"),    // .setWidth(100),
@@ -48,10 +40,11 @@ object Table3:
       // rows
       .useMemoBy((people, _) => people)((_, _) => identity)
       .useReactTableBy((_, cols, rows) =>
-        TableOptions(cols,
-                     rows,
-                     enableExpanding = true,
-                     getSubRows = _.subRows.toOption.map(_.toList).getOrElse(List.empty)
+        TableOptions(
+          cols,
+          rows,
+          enableExpanding = true,
+          getSubRows = _.subRows.toOption.map(_.toList).getOrElse(List.empty)
         )
       )
       .render((_, _, _, table) =>
@@ -59,8 +52,4 @@ object Table3:
           <.h2("Table with Expanding Rows"),
           HTMLTableVirtualized(table, containerClass = Css("container"))
         )
-        // HTMLTable.virtualized(ExpandedTableDef)(
-        //   tableClass = Css("virtualized"),
-        //   headerCellFn = Some(HTMLTable.sortableHeaderCellFn(useDiv = true))
-        // )(tableInstance)
       )
